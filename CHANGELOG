@@ -1,6 +1,14 @@
 CHANGELOG Roundcube Webmail
 ===========================
 
+RELEASE 1.4.2
+-------------
+- Plugin API: Make actionbefore, before<action>, actionafter and after<action> events working with plugin actions (#7106)
+- Managesieve: Replace "Filter disabled" with "Filter enabled" (#7028)
+- Managesieve: Fix so modifier type select wasn't hidden after hiding modifier select on header change
+- Managesieve: Fix filter selection after removing a first filter (#7079)
+- Markasjunk: Fix marking more than one message as spam/ham with email_learn driver (#7121)
+- Password: Fix kpasswd and smb drivers' double-escaping bug (#7092)
 - Enigma: Add script to import keys from filesystem to the db storage (for multihost)
 
 RELEASE 1.4.1
