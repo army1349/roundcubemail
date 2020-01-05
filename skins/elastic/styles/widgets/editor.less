@@ -30,6 +30,12 @@ div.tox {
         box-shadow: 0 0 0 .2rem @color-input-border-focus-shadow !important;
     }
 
+    &.focused {
+        border-color: @color-input-border-focus !important;
+        box-shadow: 0 0 0 .2rem @color-input-border-focus-shadow !important;
+    }
+}
+
     .tox-toolbar-overlord {
         z-index: 1; // for sticky header feature
 
@@ -468,6 +474,10 @@ div.tox {
     & > iframe { // e.g. mailvelope frame
         border-radius: .3rem;
         border: 1px solid @color-input-border;
+        min-height: 30em;
+    }
+
+    #composebody_ifr {
         min-height: 30em;
     }
 }

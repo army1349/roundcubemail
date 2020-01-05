@@ -3798,7 +3798,7 @@ function rcube_elastic_ui()
         }
 
         // make the textarea autoresizeable
-        textarea_autoresize_init(obj);
+        textarea_autoresize_init(editor);
 
         // sanity check
         if (sw.length != 1) {
