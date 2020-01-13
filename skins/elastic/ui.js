@@ -3179,6 +3179,9 @@ function rcube_elastic_ui()
     function recipient_input(obj)
     {
         var list, input, selection = '',
+            input_len_update = function() {
+                input.css('width', Math.max(5, input.val().length * 15 + 10));
+            },
             apply_func = function() {
                 // update the original input
                 $(obj).val(list.text() + input.val());
@@ -3275,23 +3278,10 @@ function rcube_elastic_ui()
             .on('focus mousedown', function() { list.addClass('focus'); });
 
         list = $('<ul>').addClass('form-control recipient-input ac-input rounded-left')
-            .append($('<li class="input">').append(input))
+            .append($('<li>').append(input))
             // "selection" hack to allow text selection in the recipient box or multiple boxes (#7129)
             .on('mouseup', function () { selection = window.getSelection().toString(); })
-            .on('click', function() { if (!selection.length) input.focus(); })
-            .sortable({
-                appendTo: document.body,
-                items: "> .recipient",
-                connectWith: '.recipient-input',
-                receive: function(event, ui) {
-                    var recipient = list.text();
-                    list.find('.recipient').remove();
-                    update_func(recipient);
-                    if (ui.sender) {
-                        ui.sender.find('input').change();
-                    }
-                }
-            });
+            .on('click', function() { if (!selection.length) input.focus(); });
 
         // Hide the original input/textarea
         // Note: we do not remove the original element, and we do not use
