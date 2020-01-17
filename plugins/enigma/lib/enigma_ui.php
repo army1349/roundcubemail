@@ -440,9 +440,12 @@ class enigma_ui
         $table->add_header('valid', $this->enigma->gettext('uservalid'));
 
         foreach ($this->data->users as $user) {
-            // Display domains in UTF8
-            if ($email = rcube_utils::idn_to_utf8($user->email)) {
-                $user->email = $email;
+            // Convert punny-code domain into UTF8
+            if (($pos = strpos($user->email, '@xn--')) > 0) {
+                $domain = substr($user->email, $pos + 1);
+                if ($domain = rcube_utils::idn_to_utf8($domain)) {
+                    $user->email = substr($user->email, 0, $pos + 1) . $domain;
+                }
             }
 
             $username = $user->name;
