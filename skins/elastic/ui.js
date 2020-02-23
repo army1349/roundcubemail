@@ -3820,43 +3820,16 @@ function rcube_elastic_ui()
      */
     function textarea_autoresize_init(textarea)
     {
-        var padding, minHeight,
-            resize = function() {
-                // Wait until the textarea is visible
-                if (!textarea.scrollHeight) {
-                    return setTimeout(resize, 250);
-                }
+        // FIXME: Is there a better way to get initial height of the textarea?
+        var min_height = ($(textarea)[0].rows || 5) * 21,
+            resize = function(e) {
+                var oldHeight = $(this).outerHeight();
+                $(this).outerHeight(0);
+                var newHeight = Math.max(min_height, this.scrollHeight);
+                $(this).outerHeight(oldHeight);
 
-                if (!padding) {
-                    padding = parseInt($(textarea).css('padding-top')) + parseInt($(textarea).css('padding-bottom')) + 2;
-                    minHeight = $(textarea).height();
-                }
-
-                if (textarea.scrollHeight - padding <= minHeight) {
-                    return;
-                }
-
-                // To fix scroll-jump we'll re-apply scrollTop to the (scrolled) parent
-                // after we reset textarea height
-                var scroll_element, scroll_pos = 0;
-                $(textarea).parents().each(function() {
-                    if (this.scrollTop > 0) {
-                        scroll_element = this;
-                        scroll_pos = this.scrollTop;
-                        return false;
-                    }
-                });
-
-                var oldHeight = $(textarea).outerHeight();
-                $(textarea).outerHeight(0);
-                var newHeight = Math.max(minHeight, textarea.scrollHeight);
-                $(textarea).outerHeight(oldHeight);
                 if (newHeight !== oldHeight) {
-                    $(textarea).height(newHeight);
-                }
-
-                if (scroll_pos) {
-                    scroll_element.scrollTop = scroll_pos;
+                    $(this).height(newHeight);
                 }
             };
 
