@@ -298,7 +298,7 @@ else {
 <tbody>
   <tr>
     <td><label for="smtp_server">Server</label></td>
-    <td><?php echo $smtp_host_field->show($_POST['_smtp_host']); ?></td>
+    <td><?php echo rcube::Q(rcube_utils::parse_host($RCI->getprop('smtp_server', 'localhost'))); ?></td>
   </tr>
   <tr>
     <td><label for="smtp_port">Port</label></td>
@@ -306,11 +306,11 @@ else {
   </tr>
   <tr>
     <td><label for="smtp_user">Username</label></td>
-    <td><?php echo $user; ?></td>
+    <td><?php echo rcube::Q($user); ?></td>
   </tr>
   <tr>
     <td><label for="smtp_pass">Password</label></td>
-    <td><?php echo $pass; ?></td>
+    <td><?php echo rcube::Q($pass); ?></td>
   </tr>
 </tbody>
 </table>
