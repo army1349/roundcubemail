@@ -306,11 +306,11 @@ else {
   </tr>
   <tr>
     <td><label for="smtp_user">Username</label></td>
-    <td><?php echo rcube::Q($user); ?></td>
+    <td><?php echo $user; ?></td>
   </tr>
   <tr>
     <td><label for="smtp_pass">Password</label></td>
-    <td><?php echo rcube::Q($pass); ?></td>
+    <td><?php echo $pass; ?></td>
   </tr>
 </tbody>
 </table>
