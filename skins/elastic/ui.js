@@ -3179,9 +3179,6 @@ function rcube_elastic_ui()
     function recipient_input(obj)
     {
         var list, input, selection = '',
-            input_len_update = function() {
-                input.css('width', Math.max(5, input.val().length * 15 + 10));
-            },
             apply_func = function() {
                 // update the original input
                 $(obj).val(list.text() + input.val());
@@ -3278,7 +3275,7 @@ function rcube_elastic_ui()
             .on('focus mousedown', function() { list.addClass('focus'); });
 
         list = $('<ul>').addClass('form-control recipient-input ac-input rounded-left')
-            .append($('<li>').append(input))
+            .append($('<li class="input">').append(input))
             // "selection" hack to allow text selection in the recipient box or multiple boxes (#7129)
             .on('mouseup', function () { selection = window.getSelection().toString(); })
             .on('click', function() { if (!selection.length) input.focus(); });
