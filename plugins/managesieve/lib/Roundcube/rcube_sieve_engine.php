@@ -3197,8 +3197,8 @@ class rcube_sieve_engine
         $select_op = new html_select(array(
                 'name'     => "_{$name}[$id]",
                 'id'       => "{$name}{$id}",
-                'style'    => 'display:' .(!in_array($rule, array('size', 'duplicate', 'spamtest')) ? 'inline' : 'none'),
-                'class'    => 'operator_selector col-6 custom-select',
+                'style'    => 'display:' .(!in_array($rule, array('size', 'duplicate')) ? 'inline' : 'none'),
+                'class'    => 'operator_selector col-6',
                 'onchange' => "{$name}_select(this, '{$id}')",
         ));
 
