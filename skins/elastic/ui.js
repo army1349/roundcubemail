@@ -3785,7 +3785,7 @@ function rcube_elastic_ui()
         }
 
         // make the textarea autoresizeable
-        textarea_autoresize_init(editor);
+        textarea_autoresize_init(obj);
 
         // sanity check
         if (sw.length != 1) {
@@ -3817,16 +3817,37 @@ function rcube_elastic_ui()
      */
     function textarea_autoresize_init(textarea)
     {
-        // FIXME: Is there a better way to get initial height of the textarea?
-        var min_height = ($(textarea)[0].rows || 5) * 21,
-            resize = function(e) {
-                var oldHeight = $(this).outerHeight();
-                $(this).outerHeight(0);
-                var newHeight = Math.max(min_height, this.scrollHeight);
-                $(this).outerHeight(oldHeight);
+        var padding = parseInt($(textarea).css('padding-top')) + parseInt($(textarea).css('padding-bottom')) + 2,
+            // FIXME: Is there a better way to get initial height of the textarea?
+            //        At this moment clientHeight/offsetHeight is 0.
+            min_height = ($(textarea)[0].rows || 5) * 21,
+            resize = function() {
+                // Wait until the textarea is visible
+                if (!textarea.scrollHeight) {
+                    return setTimeout(resize, 250);
+                }
 
+                if (textarea.scrollHeight - padding <= min_height) {
+                    return;
+                }
+
+                // To fix scroll-jump issue in Edge we'll find the scrolling parent
+                // and re-apply scrollTop value after we reset textarea height
+                var scroll_element, scroll_pos = 0;
+                $(textarea).parents().each(function() {
+                    if (textarea.scrollTop > 0) {
+                        scroll_element = textarea;
+                        scroll_pos = textarea.scrollTop;
+                        return false;
+                    }
+                });
+
+                var oldHeight = $(textarea).outerHeight();
+                $(textarea).outerHeight(0);
+                var newHeight = Math.max(min_height, textarea.scrollHeight);
+                $(textarea).outerHeight(oldHeight);
                 if (newHeight !== oldHeight) {
-                    $(this).height(newHeight);
+                    $(textarea).height(newHeight);
                 }
             };
 
