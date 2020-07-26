@@ -98,8 +98,13 @@ function rcube_text_editor(config, id)
   if (config.mode == 'identity') {
     conf.toolbar += ' | charmap hr link unlink image code $extra';
     $.extend(conf, {
-      plugins: 'autolink charmap code hr image link paste tabfocus',
-      file_picker_types: 'image'
+      plugins: 'autolink charmap code colorpicker hr image link paste tabfocus textcolor',
+      toolbar: 'bold italic underline alignleft aligncenter alignright alignjustify'
+        + ' | outdent indent charmap hr link unlink image code forecolor'
+        + ' | fontselect fontsizeselect',
+      file_browser_callback: function(name, url, type, win) { ref.file_browser_callback(name, url, type); },
+      file_browser_callback_types: 'image',
+      invalid_elements: 'embed' // XSS fix (#7507)
     });
   }
   // full-featured editor
