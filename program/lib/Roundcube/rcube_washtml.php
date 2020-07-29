@@ -339,15 +339,7 @@ class rcube_washtml
                     $out = $this->wash_uri($value, true);
                 }
                 else if ($this->is_link_attribute($node->nodeName, $key)) {
-                    if (!preg_match('!^(javascript|vbscript|data:)!i', $value)
-                        && preg_match('!^([a-z][a-z0-9.+-]+:|//|#).+!i', $value)
-                    ) {
-                        if ($value[0] == '#' && $this->_css_prefix !== null) {
-                            $value = '#' . $this->_css_prefix . substr($value, 1);
-                        }
-
-                        $out = $value;
-                    }
+                    $out = $this->wash_link($value);
                 }
                 else if ($this->is_funciri_attribute($node->nodeName, $key)) {
                     if (preg_match('/^[a-z:]*url\(/i', $value)) {
