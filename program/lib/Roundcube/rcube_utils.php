@@ -1487,4 +1487,85 @@ class rcube_utils
 
         return $temp_path;
     }
+
+    /**
+     * When proxy_protocol is configured for a connection type,
+     * generate the HAproxy style PROXY protocol header for injection
+     * into the TCP stream.
+     * http://www.haproxy.org/download/1.6/doc/proxy-protocol.txt
+     * 
+     * PROXY protocol headers must be sent before any other data is sent on the TCP socket.
+     *
+     * @param array $conn_options preferences array which may contain proxy_protocol (generally {driver}_conn_options)
+     *
+     * @return string proxy protocol header data, if enabled, otherwise empty string
+     */
+    public static function proxy_protocol_header($conn_options)
+    {
+        // verify that proxy_protocol option is present
+        if (!is_array($conn_options) || !array_key_exists('proxy_protocol', $conn_options)) {
+            return "";
+        }
+
+        if (is_array($conn_options['proxy_protocol'])) {
+            $protocol_version = $conn_options['proxy_protocol']['version'];
+            $options = $conn_options['proxy_protocol'];
+        }
+        else {
+            $protocol_version = $conn_options['proxy_protocol'];
+        }
+
+        $remote_addr = $options['remote_addr'] ?? $_SERVER['REMOTE_ADDR'];
+        $remote_port = $options['remote_port'] ?? $_SERVER['REMOTE_PORT'];
+        $local_addr = $options['local_addr'] ?? $_SERVER['SERVER_ADDR'];
+        $local_port = $options['local_port'] ?? $_SERVER['SERVER_PORT'] ;
+        $ip_version = (strpos($remote_addr, ":") === false ? 4 : 6);
+
+        if ($protocol_version === 1) {
+            // text based PROXY protocol
+
+            // PROXY protocol does not support dual IPv6+IPv4 type addresses, e.g. ::127.0.0.1
+            if ($ip_version === 6) {
+                if (strpos($remote_addr, ".") !== false) {
+                    $remote_addr = inet_ntop(inet_pton($remote_addr));
+                }
+                if (strpos($local_addr, ".") !== false) {
+                    $local_addr = inet_ntop(inet_pton($local_addr));
+                }
+            }
+
+            $text = sprintf('PROXY %s %s %s %s %s\r\n',
+                        ($ip_version === 6 ? "TCP6" : "TCP4"),
+                        $remote_addr,
+                        $local_addr,
+                        $remote_port,
+                        $local_port);
+            return $text;
+        }
+        else if ($protocol_version === 2) {
+            // binary PROXY protocol
+            $head = sprintf('%s%s%s%s',
+                        "0D0A0D0A000D0A515549540A", // protocol header
+                        "21", // protocol version and command
+                        ($ip_version === 6 ? "2" : "1"), // IP version
+                        "1"); // TCP
+                
+            $addr = sprintf('%s%s%s%s',
+                        inet_pton($remote_addr),
+                        inet_pton($local_addr),
+                        pack("n", $remote_port),
+                        pack("n", $local_port));
+                
+            $bin = sprintf('%s%s%s',
+                       pack("H*", $head),
+                       pack("n", strlen($addr)),
+                       $addr);
+            return $bin;
+        }
+        else {
+            // unknown proxy protocol version
+            return "";
+        }
+    }
+
 }
